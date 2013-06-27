@@ -19,8 +19,22 @@ header h1 {
     font-size: 60px;
     line-height: 50px;
 }
-header a { color: white; }
-header a:hover { color: white; }
+header aside {
+    float: right;
+    text-align: right;
+}
+header aside a {
+    display: block;
+    margin-bottom: 10px;
+    color: white;
+    -webkit-transition: -webkit-transform .5s;
+}
+header aside a:hover {
+    color: white;
+    text-decoration: none;
+    -webkit-transform: translateX(-20px);
+}
+
 
 [data-template] {
     display: none;
