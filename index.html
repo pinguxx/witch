@@ -8,13 +8,15 @@
     <link rel="stylesheet" href="components/prism/prism-okaidia.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 
-    <script src="components/jquery/jquery.js"></script>
+    <!-- Notice it is usually much better to put scripts at the end of <body>,
+        but because of all the inline <script>s in this page, i put these here. -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <script src="components/rivets/dist/rivets.js"></script>
     <script src="components/watch/index.js"></script>
-    <script src="../dist/adapter.js"></script>
-    <script src="../dist/rivets-extras.js"></script>
-    <script src="../dist/rest.js"></script>
-    <script src="../dist/witch.js"></script>
+    <script src="dist/adapter.js"></script>
+    <script src="dist/rivets-extras.js"></script>
+    <script src="dist/rest.js"></script>
+    <script src="dist/witch.js"></script>
 </head>
 <body>
 
@@ -23,7 +25,7 @@
     <p>Against monster frameworks and unnatural coding practices, you may need a <strong>witch</strong> at your side.</p>
 
     <h2>The Basic</h2>
-    <p>Data binding with Rivets, object observer with Watch.js</p>
+    <p>Data binding with <a href="rivetsjs.com">Rivets</a>, object observer with <a href="https://github.com/melanke/Watch.JS">Watch.js</a></p>
     <div class="row">
         <div class="span3">
             <h3>Output</h3>
