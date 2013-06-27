@@ -5,12 +5,14 @@
     <title>Witch.js</title>
 
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="components/bootstrap/css/bootstrap.css"/>-->
     <link rel="stylesheet" href="components/prism/prism-okaidia.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 
     <!-- Notice it is usually much better to put scripts at the end of <body>,
         but because of all the inline <script>s in this page, i put these here. -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <!--<script src="components/jquery/jquery.min.js"></script>-->
     <script src="components/rivets/dist/rivets.js"></script>
     <script src="components/watch/index.js"></script>
     <script src="dist/adapter.js"></script>
@@ -20,9 +22,20 @@
 </head>
 <body>
 
-<div class="containers">
-    <h1>Witch.js</h1>
-    <p>Against monster frameworks and unnatural coding practices, you may need a <strong>witch</strong> at your side.</p>
+<div>
+    <header>
+        <div class="pull-right">
+            <a href="https://github.com/eyy/witch">
+                We're on Github
+                <span class="brandico-github"></span>
+            </a>
+        </div>
+        <h1>
+            Witch.js
+            <img src="img/icon.png" alt="" />
+        </h1>
+        <p>Against monster-frameworks and unnatural coding practices, you might need a <strong>witch</strong> at your side.</p>
+    </header>
 
     <h2>The Basic</h2>
     <p>Data binding with <a href="http://rivetsjs.com">Rivets</a>, object observer with <a href="https://github.com/melanke/Watch.JS">Watch.js</a></p>
@@ -123,7 +136,7 @@
     </div>
     <hr>
 
-    <h2>Basic all the way down</h2>
+    <h2>Basic All The Way Down</h2>
     <p>Templates, simple as they should be.</p>
     <div class="row">
         <div class="span4">
@@ -179,6 +192,14 @@
                 users: users
             };
         </script>
+    </div>
+    <hr>
+
+    <h2>... And Basically, All The Way Up As Well</h2>
+    <p>REST assure: you can fetch and save your data from/to the server.</p>
+    <div class="muted">
+        <h3>No example yet.</h3>
+        <small>(But it should work)</small>
     </div>
 </div>
 

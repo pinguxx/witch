@@ -1,6 +1,26 @@
+@import url(http://weloveiconfonts.com/api/?family=brandico);
+
+/* brandico */
+[class*="brandico-"]:before {
+    font-family: 'brandico', sans-serif;
+}
+
 body {
     padding: 50px;
 }
+
+header {
+    margin: -50px -50px 50px; padding: 50px;
+    background: #8b35dc;
+    color: white;
+    font-size: 20px;
+}
+header h1 {
+    font-size: 60px;
+    line-height: 50px;
+}
+header a { color: white; }
+header a:hover { color: white; }
 
 [data-template] {
     display: none;
