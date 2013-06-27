@@ -6,6 +6,7 @@
     "watch": "https://raw.github.com/melanke/Watch.JS/master/src/watch.js",
     "bootstrap": "http://twitter.github.io/bootstrap/assets/bootstrap.zip",
     "prism": "latest",
-    "jquery": "~2.0.2"
+    "jquery": "~2.0.2",
+    "witch": "latest"
   }
 }
