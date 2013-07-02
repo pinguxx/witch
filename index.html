@@ -10,8 +10,8 @@
 
     <!-- Notice it is usually much better to put scripts at the end of <body>,
         but because of all the inline <script>s in this page, i put these here. -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-    <!--<script src="components/jquery/jquery.min.js"></script>-->
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>-->
+    <script src="components/jquery/jquery.min.js"></script>
     <script src="components/rivets/dist/rivets.min.js"></script>
     <script src="components/watch/index.js"></script>
 
@@ -204,10 +204,60 @@
     <hr>
 
     <h2>... And Basically, All The Way Up As Well</h2>
-    <p>REST assure: you can fetch and save your data from/to the server.</p>
-    <div class="muted">
-        <h3>No example yet.</h3>
-        <small>(But it should work)</small>
+    <p>
+        REST assure: you can fetch and save your data from/to the server. Also, a little animation example.<br />
+        <span class="label label-info">Please notice: without a server, the example is not really working. But you can clone it and try for yourself:</span>
+    </p>
+    <pre style="width:500px;"><code>git clone https://git@github.com:eyy/witch.git -b gh-pages
+cd witch
+npm install
+node app.js</code></pre>
+    <div class="row">
+        <div class="span3">
+            <h3>REST</h3>
+            <div class="html">
+            <style type="text/css">
+                .flash { -webkit-animation: 2s flash; }
+                @-webkit-keyframes flash {
+                    from { background: yellow; }
+                    to { background: auto; }
+                }
+            </style>
+
+            <div data-rivets="server">
+                <ul>
+                    <!-- Add a nice flash animation when adding items -->
+                    <li data-each-item="items.list" data-class-flash="item._new">
+                        <!-- `delete()` -->
+                        <i class="icon-remove" data-on-click="item:delete"></i>
+                        <span data-text="item.name"></span>
+                    </li>
+                </ul>
+                <!-- `saveAs()` will clone the data and clean itself -->
+                <form data-on-submit="item:saveAs">
+                    <input type="text" data-value="item.name"/>
+                    <button class="btn">Add Item</button>
+                </form>
+            </div>
+            </div>
+        </div>
+        <script>
+            var items = new witch.Collection([
+                // Fake data, pretend it's from the server
+                { name: 'Spell book' },
+                { name: 'Broom' },
+            ], '/api/items/'); // <-- collection url
+
+            var server = {
+                items: items,
+                item: new witch.Model({}, items) // <-- model's collection
+            };
+
+            $(function() {
+                // Fetch items from server!
+                items.fetch();
+            });
+        </script>
     </div>
 </div>
 

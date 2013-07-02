@@ -1,0 +1,9 @@
+{
+  "name": "witch-site",
+  "version": "0.0.2",
+  "dependencies": {
+    "express": "3.0.x",
+    "mongoose": "*",
+    "resors": "*"
+  }
+}

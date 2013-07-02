@@ -13,7 +13,7 @@
      REST
      */
     var rest = function(method, url, data, cb) {
-        data = data ? (method == 'get' ? $.param(data) : JSON.stringify(data)) : null;
+        data = data ? (method == 'get' ? $.param(data) : JSON.stringify(data)) : undefined;
 
         return $.ajax({
             type: method,
@@ -22,10 +22,9 @@
             success: cb,
             dataType: 'json',
             processData: false,
-            contentType: 'application/json'
+            contentType: data ? 'application/json' : undefined
         });
     };
-
     [ 'get', 'post', 'put', 'delete' ].forEach(function(method) {
         rest[method] = rest.bind(rest, method);
     });
@@ -36,14 +35,15 @@
      */
     var Model = function(data, collection) {
         this._collection = collection || this._collection;
+        this._url = this._url || this._collection.url;
         $.extend(this, data);
     };
     $.extend(Model.prototype, {
         _parse: function(res) { return res; },
         _callback: function(res) {
             res = this._parse(res);
-            if (!this._id && this._collection)
-                this._collection.move(this, this._id);
+//            if (!this._id && this._collection)
+//                this._collection.move(this, this._id);
 
             $.extend(this, res);
         },
@@ -65,7 +65,7 @@
             return rest.get(this._url + this._id, data, this._callback.bind(this));
         },
         save: function() {
-            return rest[this._id ? 'put' : 'post'](this._url + this._id, this, this._callback.bind(this));
+            return rest[this._id ? 'put' : 'post'](this._url + (this._id || ''), this, this._callback.bind(this));
         },
         saveAs: function() {
             var clone = this.toJSON();
@@ -97,7 +97,7 @@
         this.url = url || this.url || this.model.prototype._url;
 
         this.clean();
-        if (list)
+        if (list && list.length)
             this.push(list);
     };
     $.extend(Collection.prototype, {
