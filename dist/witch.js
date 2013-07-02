@@ -1,3 +1,43 @@
+/* rivets adapter and config */
+(function() {
+    var subscriber = function(fn) {
+        return function(o, path, cb) {
+            path = path.split('.');
+            fn(o, path[0], cb, path.length - 1)
+        };
+    };
+    var reader = function(o, path, value) {
+        if (!path)
+            return o;
+
+        var p = path.split('.');
+        while (p.length > 1) {
+            o = o[p.shift()];
+            if (o == undefined)
+                break;
+        }
+
+        if (arguments.length === 2)
+            return o[p.shift()];
+        o[p.shift()] = value;
+    };
+
+    rivets.configure({
+        adapter: {
+            subscribe: subscriber(watch),
+            unsubscribe: subscriber(unwatch),
+            read: reader,
+            publish: reader
+        },
+        handler: function(el, e, binding) {
+            if (!$(el).data('default'))
+                e.preventDefault();
+            return this.call(binding.model, binding);
+        }
+    });
+})();
+
+/* witch */
 (function() {
     var slice = [].slice;
 
@@ -13,7 +53,7 @@
      REST
      */
     var rest = function(method, url, data, cb) {
-        data = data ? (method == 'get' ? $.param(data) : JSON.stringify(data)) : undefined;
+        data = data ? (method == 'get' ? $.param(data) : JSON.stringify(data)) : null;
 
         return $.ajax({
             type: method,
@@ -22,9 +62,10 @@
             success: cb,
             dataType: 'json',
             processData: false,
-            contentType: data ? 'application/json' : undefined
+            contentType: 'application/json'
         });
     };
+
     [ 'get', 'post', 'put', 'delete' ].forEach(function(method) {
         rest[method] = rest.bind(rest, method);
     });
@@ -35,15 +76,14 @@
      */
     var Model = function(data, collection) {
         this._collection = collection || this._collection;
-        this._url = this._url || this._collection.url;
         $.extend(this, data);
     };
     $.extend(Model.prototype, {
         _parse: function(res) { return res; },
         _callback: function(res) {
             res = this._parse(res);
-//            if (!this._id && this._collection)
-//                this._collection.move(this, this._id);
+            if (!this._id && this._collection)
+                this._collection.move(this, this._id);
 
             $.extend(this, res);
         },
@@ -65,7 +105,7 @@
             return rest.get(this._url + this._id, data, this._callback.bind(this));
         },
         save: function() {
-            return rest[this._id ? 'put' : 'post'](this._url + (this._id || ''), this, this._callback.bind(this));
+            return rest[this._id ? 'put' : 'post'](this._url + this._id, this, this._callback.bind(this));
         },
         saveAs: function() {
             var clone = this.toJSON();
@@ -97,7 +137,7 @@
         this.url = url || this.url || this.model.prototype._url;
 
         this.clean();
-        if (list && list.length)
+        if (list)
             this.push(list);
     };
     $.extend(Collection.prototype, {
