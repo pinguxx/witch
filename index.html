@@ -180,7 +180,7 @@
 
             var User = witch.inherit(witch.Model, {
                 card: function() {
-                    // Use your template
+                    // Use it
                     var card = new UserCard({ user: this });
                     card.render();
                 }
@@ -192,11 +192,13 @@
                 { name: 'Medea' }
             ], User);
 
-            users.list[0].card();
-
             var temp = {
                 users: users
             };
+
+            $(function() {
+                users.list[0].card();
+            });
         </script>
     </div>
     <hr>
