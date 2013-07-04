@@ -41,18 +41,10 @@
 (function() {
     var slice = [].slice;
 
-    // from http://stackoverflow.com/a/2117523/152809, via stapes
-    var uid = function() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-            return v.toString(16);
-        });
-    };
-
     /*
      REST
      */
-    var rest = function(method, url, data, cb) {
+    var rest = function(method, url, data, cb, context) {
         data = data ? (method == 'get' ? $.param(data) : JSON.stringify(data)) : null;
 
         return $.ajax({
@@ -62,30 +54,27 @@
             success: cb,
             dataType: 'json',
             processData: false,
-            contentType: 'application/json'
+            contentType: 'application/json',
+            context: context
         });
     };
-
-    [ 'get', 'post', 'put', 'delete' ].forEach(function(method) {
-        rest[method] = rest.bind(rest, method);
-    });
-
 
     /*
      Model
      */
     var Model = function(data, collection) {
         this._collection = collection || this._collection;
-        $.extend(this, data);
+		this._callback = this._callback.bind(this);
+		this.update(data);
     };
-    $.extend(Model.prototype, {
-        _parse: function(res) { return res; },
-        _callback: function(res) {
-            res = this._parse(res);
-            if (!this._id && this._collection)
-                this._collection.move(this, this._id);
-
-            $.extend(this, res);
+    Model.prototype = {
+        _parse: function(data) { return data; },
+        _callback: function(data) {
+            data = this._parse(data);
+            if (!this._id && data._id && this._collection)
+                this._collection.byId[data._id] = this;
+				
+            $.extend(this, data);
         },
         _clean: function() {
             var prop;
@@ -102,10 +91,10 @@
             return o;
         },
         fetch: function(data) {
-            return rest.get(this._url + this._id, data, this._callback.bind(this));
+            return rest('get', this._url + this._id, data, this._callback);
         },
         save: function() {
-            return rest[this._id ? 'put' : 'post'](this._url + this._id, this, this._callback.bind(this));
+            return rest(this._id ? 'put' : 'post', this._url + this._id, this, this._callback);
         },
         saveAs: function() {
             var clone = this.toJSON();
@@ -114,15 +103,19 @@
         },
         delete: function() {
             if (this._id)
-                return rest.delete(this._url + this._id, {}, function() {
+                return rest('delete', this._url + this._id, {}, function() {
                     this._clean();
                     this._destroyed = true;
-                }.bind(this));
+                }, this);
 
             this._clean();
             this._destroyed = true;
-        }
-    });
+        },
+		update: function(data) {
+			$.extend(this, this._parse(data));
+			return this;
+		}
+    };
 
 
     /*
@@ -140,14 +133,14 @@
         if (list)
             this.push(list);
     };
-    $.extend(Collection.prototype, {
+    Collection.prototype = {
         clean: function() {
             this.list = [];
             this.byId = {};
             return this;
         },
         fetch: function(data) {
-            return rest.get(this.url, data, function(res) {
+            return rest('get', this.url, data, function(res) {
                 this.push(res);
             }.bind(this));
         },
@@ -157,6 +150,9 @@
                 this.filled = true;
                 return false;
             }
+
+			if (this.byId[model._id])
+				return this.byId[model._id].update(model);
 
             model = (model instanceof Model) ? model : new this.model(model, this);
             model._collection = this;
@@ -168,16 +164,18 @@
                     this.remove(model);
             }.bind(this));
 
-            this.byId[model._id || uid()] = model;
+            if (model._id) this.byId[model._id] = model;
             this.list.push(model);
 
             return model;
         },
         remove: function(model) {
-            this.list.splice(this.list.indexOf(model), 1);
+            var i = this.list.indexOf(model);
+            if (i !== -1) this.list.splice(i, 1);
+            delete this.byId[model._id];
             callWatchers(this);
         }
-    });
+    };
 
     /*
      Template
@@ -187,7 +185,7 @@
         this.data = $.extend({}, this.data, data);
         this.data.tpl = this;
     };
-    $.extend(Template.prototype, {
+    Template.prototype = {
         render: function(fn) {
             if (!this.template)
                 return console.error('No template', this);
@@ -195,30 +193,31 @@
             fn || (fn = this.ready);
             witch.config.template(this.template, function(err, el) {
                 this.el = el;
-                this.binding = rivets.bind(this.el, this.data);
+                this._rivets = rivets.bind(this.el, this.data);
                 if (fn) fn.call(this);
             }.bind(this));
 
             return this;
         }
-    });
+    };
 
     window.witch = {
         Model: Model,
         Collection: Collection,
         Template: Template,
+        rest: rest,
         config: {
+            auto: true,
             template: function(tpl, cb) {
-                var el = $('[data-template="' + tpl + '"] > :not(:empty)').clone();
+                var el = $($('[data-template="' + tpl + '"]').html().trim());
                 cb(!el.length, el);
-            },
-            preload: true
+            }
         },
         init: function() {
             $('[data-rivets]').each(function() {
                 var t = $(this),
                     m = window[t.data('rivets')];
-                if (m)
+                if (m && !m._rivets)
                     m._rivets = rivets.bind(t, m);
             });
         },
@@ -233,12 +232,11 @@
                 return (typeof c == 'function') ? c.prototype : c;
             }));
             return Class;
-        },
-        rest: rest
+        }
     };
 
     $(function() {
-        if (witch.config.preload)
+        if (witch.config.auto)
             witch.init();
     });
 
