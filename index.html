@@ -6,11 +6,7 @@
 
     <link rel="stylesheet" href="components/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="components/prism/prism-okaidia.css"/>
-
-    <!-- Notice it is usually much better to put scripts at the end of <body>,
-        but because of all the inline <script>s in this page, i put these here. -->
-    <script src="components/jquery/jquery.min.js"></script>
-    <script src="dist/witch-dep.min.js"></script>
+    <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body>
 
@@ -33,7 +29,14 @@
         <p>Against monster-frameworks and unnatural coding practices, you might need a <strong>witch</strong> at your side.</p>
     </header>
 
-    <!-- <h3 class="pull-right">Only 2kb (7kb with dependencies)!</h3> -->
+    <!-- Notice it is usually much better to put scripts at the end of <body>,
+        but because of all the inline <script>s in this page, i put these here. -->
+    <script src="components/jquery/jquery.min.js"></script>
+    <!--<script src="dist/witch-dep.min.js"></script>-->
+
+    <script src="components/watch/index.js"></script>
+    <script src="components/rivets/dist/rivets.js"></script>
+    <script src="dist/witch.js"></script>
 
     <h2>The Basic</h2>
     <p>Data binding with <a href="http://rivetsjs.com">Rivets</a>, object observer with <a href="https://github.com/melanke/Watch.JS">Watch.js</a></p>
