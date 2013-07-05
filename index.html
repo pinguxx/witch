@@ -276,7 +276,7 @@ node app</code></pre>
         var t = $(this),
             html = cleanTabs(t.find('.html').html().trim()),
             script = cleanTabs(t.find('script').text().trim());
-        witch.config.template('code', function(err, el) {
+        witch.config.template('code', {}, function(err, el) {
             t.prepend(el);
             el.find('code.language-markup').text(html);
             el.find('code.language-javascript').text(script);
