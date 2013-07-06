@@ -1,6 +1,23 @@
 /* rivets adapter and config */
 /* witch */
-(function($, rivets, WatchJS) {
+(function (factory) {
+    // CommonJS
+    if (typeof exports === 'object')
+        module.exports = factory(
+            require('jquery'),
+            require('rivets'),
+            require('watchjs')
+        );
+
+    // AMD
+    else if (typeof define === 'function' && define.amd)
+        define('witch', ['jquery', 'rivets', 'watch'], factory);
+
+    // Browser globals
+    else
+        window.witch = factory($ || jQuery, rivets, WatchJS);
+
+})(function($, rivets, WatchJS) {
     if (!$)
         return console.error('Witch: where is jQuery?');
     if (!rivets)
@@ -211,7 +228,7 @@
     };
 
 
-    window.witch = {
+    var witch = {
         Model: Model,
         Collection: Collection,
         Template: Template,
@@ -251,4 +268,6 @@
             witch.init();
     });
 
-})($ || jQuery, rivets, WatchJS);
+    return witch;
+
+});
